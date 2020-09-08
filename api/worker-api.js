@@ -4,6 +4,10 @@ const https = require("https");
 const bodyParser = require("body-parser");
 const Worker = require("../models/Worker");
 
+// Bcrypt
+const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 10;
+
 // Get all workers
 router.get('/workers', (req, res) => {
     Worker.find((err, workerList) => {
@@ -60,7 +64,7 @@ router.delete('/workers', (req, res) => {
     });
 });
 
-// Get workers by id
+// Get a specific worker by id
 router.get('/workers/:id', (req, res) => {
     Worker.findOne({ _id: req.params.id }, (err, worker) => {
         if (worker) {
@@ -75,6 +79,58 @@ router.get('/workers/:id', (req, res) => {
     });
 });
 
+// Update a specific worker by id (overwrite entire record)
+router.put('/workers/:id', (req, res) => {
+        Worker.updateOne(
+            { _id: req.params.id },
+            {
+                country: req.body.country,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                password: bcrypt.hashSync(req.body.password, SALT_ROUNDS),
+                address1: req.body.address1,
+                address2: req.body.address2,
+                city: req.body.city,
+                state: req.body.state,
+                postcode: req.body.postcode,
+                mobile: req.body.mobile
+            },
+            (err) => {
+                if (err) {
+                    res.json(err);
+                }
+                else {
+                    res.json({ 
+                        status: 'success', 
+                        message: 'Worker successfully updated.' 
+                    })
+                }
+        })
+});
 
+
+// Update a specific worker by id (update only fields in the request)
+// Allows updating specific fields only, such as password or email
+router.patch('/workers/:id', (req, res) => {
+    // If password is passed in, hash it
+    if (req.body.password) {
+        req.body.password = bcrypt.hashSync(req.body.password, SALT_ROUNDS);
+    }
+    Worker.updateOne(
+        { _id: req.params.id },
+        { $set: req.body },
+        (err) => {
+            if (err) {
+                res.json(err);
+            }
+            else {
+                res.json({ 
+                    status: 'success', 
+                    message: 'Worker successfully updated.'
+                })
+            }
+    })
+});
 
 module.exports = router;

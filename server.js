@@ -17,7 +17,8 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
 app.use(workerApi);
 
-mongoose.connect("mongodb+srv://sergei:Deakin2020@cluster0.t3ayv.mongodb.net/iCrowdTaskDB?retryWrites=true&w=majority", {useNewUrlParser: true})
+mongoose.connect("mongodb+srv://sergei:Deakin2020@cluster0.t3ayv.mongodb.net/iCrowdTaskDB?retryWrites=true&w=majority", 
+    {useNewUrlParser: true, useUnifiedTopology: true})
 
 // Entry point - login page
 app.get('/', (req, res) => {
