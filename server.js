@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const Requester = require("./models/Requester");
 const mongoose = require("mongoose");
 const validator = require("validator");
+const workerApi = require("./api/worker-api");
 const mail = require('./mail');
 
 // Bcrypt
@@ -12,8 +13,9 @@ const app = express()
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({extended:true}))
-app.use(express.static("public"))
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.static("public"));
+app.use(workerApi);
 
 mongoose.connect("mongodb+srv://sergei:Deakin2020@cluster0.t3ayv.mongodb.net/iCrowdTaskDB?retryWrites=true&w=majority", {useNewUrlParser: true})
 
@@ -92,7 +94,7 @@ app.post('/reqsignup', (req, res) => {
 });
 
 // Tasks page
-app.get('/reqtask', (req,res) => {
+app.get('/reqtask', (req, res) => {
     res.sendFile(__dirname + '/reqtask.html');
 })
 
